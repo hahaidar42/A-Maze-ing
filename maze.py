@@ -13,10 +13,13 @@ class Cell:
 
 
 class Maze:
-    def __init__(self):
+    def __init__(self, width: int, height: int, entry: tuple[int, int],
+                 exit_pos: tuple[int, int]):
         self.grid: list[list[Cell]] = []
-        self.width: int = 12
-        self.height: int = 12
+        self.width: int = width
+        self.height: int = height
+        self.entry: tuple[int, int] = entry
+        self.exit_pos: tuple[int, int] = exit_pos
         for y in range(self.height):
             row: list[Cell] = []
             for x in range(self.width):
@@ -109,11 +112,18 @@ class Maze:
             print("|", end="")
             for x in range(self.width):
                 cell = self.get_cell(x, y)
-                if cell.east_wall:
-                    print("   |", end="")
+                if (x, y) == self.entry:
+                    print(" E ", end="")
+                elif (x, y) == self.exit_pos:
+                    print(" X ", end="")
                 else:
-                    print("    ", end="")
+                    print("   ", end="")
+                if cell.east_wall:
+                    print("|", end="")
+                else:
+                    print(" ", end="")
             print()
+
             for x in range(self.width):
                 cell = self.get_cell(x, y)
                 if cell.south_wall:
@@ -128,6 +138,7 @@ class Maze:
                 "Maze dimensions must be at least 9x7 for Pattern42.")
         midw: int = self.width / 2
         midh: int = self.height / 2
+        t = []
         cell1 = self.get_cell(int(midw) - 2, int(midh) - 1)
         cell1.visited = True
         cell2 = self.get_cell(int(midw) - 3, int(midh) - 1)
@@ -178,6 +189,19 @@ class Maze:
 
     def build(self, seed: int | None = None, pattern42: bool = False) -> None:
         self.reset()
+        if self.entry == self.exit_pos:
+            raise ValueError(
+                f"Entry and exit must be different, both are {self.entry}")
         if pattern42:
             self.Pattern42()
+            for row in self.grid:
+                for i in row:
+                    if i.visited:
+                        if (i.x, i.y) == self.entry:
+                            raise ValueError(
+                                "Entry is in the 42 pattern")
+                        if (i.x, i.y) == self.exit_pos:
+                            raise ValueError(
+                                "Exit is in the 42 pattern")
+
         self.generate(seed)
