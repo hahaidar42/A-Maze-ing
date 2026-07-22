@@ -164,3 +164,4 @@ class Maze:
         cell18.visited = True
         cell19 = self.get_cell(int(midw + 1), int(midh)-1)
         cell19.visited = True
+
