@@ -79,7 +79,9 @@ class Maze:
                 unvisited_neighbors.append(direction)
         return unvisited_neighbors
 
-    def generate(self) -> None:
+    def generate(self, seed: int | None = None) -> None:
+        if seed is not None:
+            random.seed(seed)
         x = random.randint(0, self.width - 1)
         y = random.randint(0, self.height - 1)
         current = self.get_cell(x, y)
@@ -164,3 +166,18 @@ class Maze:
         cell18.visited = True
         cell19 = self.get_cell(int(midw + 1), int(midh)-1)
         cell19.visited = True
+
+    def reset(self) -> None:
+        for row in self.grid:
+            for cell in row:
+                cell.north_wall = True
+                cell.east_wall = True
+                cell.south_wall = True
+                cell.west_wall = True
+                cell.visited = False
+
+    def build(self, seed: int | None = None, pattern42: bool = False) -> None:
+        self.reset()
+        if pattern42:
+            self.Pattern42()
+        self.generate(seed)
