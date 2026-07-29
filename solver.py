@@ -1,106 +1,106 @@
-def solve_maze(maze, entry: Tuple[int, int], exit: Tuple[int, int]) -> Optional[str]:
-    """
-    Find shortest path from entry to exit using BFS.
+from collections import deque
+from maze import Maze
+
+
+def _can_move(maze: Maze, x: int, y: int, direction: str) -> bool:
+    cell = maze.get_cell(x, y)
+    neighbor = maze.get_neighbor(cell, direction)
+    if neighbor is None:
+        return False
     
-    Args:
-        maze: Maze object with cells and wall information
-        entry: (x, y) starting position
-        exit: (x, y) target position
-        
+    if direction == "N":
+        return not cell.north_wall
+    elif direction == "E":
+        return not cell.east_wall
+    elif direction == "S":
+        return not cell.south_wall
+    elif direction == "W":
+        return not cell.west_wall
+    else:
+        raise ValueError(f"Invalid direction: {direction}")
+
+
+def get_reachable_neighbors(maze: Maze, x: int, y: int) -> list[tuple[int, int]]:
+    """Return all reachable neighbor coordinates from (x,y)."""
+    coords = []
+    for direction in ("N", "E", "S", "W"):
+        if _can_move(maze, x, y, direction):
+            cell = maze.get_cell(x, y)
+            neighbor = maze.get_neighbor(cell, direction)
+            coords.append((neighbor.x, neighbor.y))
+    return coords
+
+
+def _coords_to_direction(from_pos: tuple[int, int], to_pos: tuple[int, int]) -> str:
+    """Convert coordinate step to N/E/S/W."""
+    if (to_pos[0] - from_pos[0]) == 0:
+        if (to_pos[1] - from_pos[1]) == -1:
+             return "N"
+        elif (to_pos[1] - from_pos[1]) == 1:
+             return "S"
+    elif (to_pos[1] - from_pos[1]) == 0:
+            if (to_pos[0] - from_pos[0]) == 1:
+                return "E"
+            elif (to_pos[0] - from_pos[0]) == -1:
+                return "W"
+    else:  
+        raise ValueError(f"Invalid direction")
+
+
+def solve(maze: Maze) -> tuple[str, list[tuple[int, int]]]:
+    """Find shortest path using BFS.
+    
     Returns:
-        String of directions (N/E/S/W) or None if no path exists
+        Tuple of (direction_string, coordinate_path)
     """
+    start = maze.entry
+    goal = maze.exit_pos
+    
+    queue = deque([start])
+    visited = {start}
+    came_from = {start: None}
+    
+    while queue:
+        current = queue.popleft()
+        
+        if current == goal:
+            break
+        
+        for neighbor in get_reachable_neighbors(maze, current[0], current[1]):  # ← Your function here
+            if neighbor not in visited:
+                visited.add(neighbor)
+                came_from[neighbor] = current
+                queue.append(neighbor)
+    else:
+        raise ValueError("No path found")
+    
+    path = []
+    node = goal
+    while node is not None:
+        path.append(node)
+        node = came_from[node]
+    
+    path.reverse()
+    
+    directions = []
+    for i in range(len(path) - 1):
+        direction = _coords_to_direction(path[i], path[i + 1])  # ← Your function here
+        directions.append(direction)
+    
+    return "".join(directions), path
+
+def main() -> None:
+    maze = Maze(5, 5, (0, 0), (4, 4))
+    maze.build(seed=42)
+    maze.print_ascii()
+    
+    directions, path = solve(maze)
+    print(f"\nPath: {path}")
+    print(f"Directions: {directions}")
+    print(f"Steps: {len(path) - 1}")
+
+if __name__ == "__main__":
+    main()
 
 
-
-def get_neighbors(maze, x: int, y: int) -> List[Tuple[int, int, str]]:
-    """
-    Return list of (neighbor_x, neighbor_y, direction) for all reachable neighbors.
-    A neighbor is reachable if:
-    1. It's inside the maze
-    2. There's no wall between current cell and neighbor
-    """
-
-# How do you check if a neighbor is inside the maze? (Use maze.is_inside())
-
-# How do you get the neighbor cell? (Use maze.get_cell() or maze.get_neighbor())
-
-# How do you check if there's a wall between two cells?
-
-
-
-# Put start into queue
-
-# Mark start visited
-
-# while queue is not empty
-
-#     remove front cell
-
-#     if this is exit
-
-#         stop
-
-#     for every neighbor
-
-#         if not visited
-
-#             mark visited
-
-#             add to queue
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# pseudocode 
-
-
-# queue = deque([start])
-
-# visited = {start}
-
-# parent = {}
-
-# while queue:
-
-#     current = queue.popleft()
-
-#     if current == end:
-#         break
-
-#     for neighbor in neighbors(current):
-
-#         if neighbor not in visited:
-
-#             visited.add(neighbor)
-
-#             parent[neighbor] = current
-
-#             queue.append(neighbor)
-
-
-
-# recovering the path
-
-# path = []
-
-# current = end
-
-# while current != start:
-#     path.append(current)
-#     current = parent[current]
-
-# path.append(start)
-
-# path.reverse()
+#cell (x,y) north (x,y-1) east (x+1,y) south (x,y+1) west (x-1,y)   
