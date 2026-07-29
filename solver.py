@@ -84,7 +84,7 @@ def solve(maze: Maze) -> tuple[str, list[tuple[int, int]]]:
     
     directions = []
     for i in range(len(path) - 1):
-        direction = _coords_to_direction(path[i], path[i + 1])  # ← Your function here
+        direction = _coords_to_direction(path[i], path[i + 1])
         directions.append(direction)
     
     return "".join(directions), path
@@ -104,3 +104,4 @@ if __name__ == "__main__":
 
 
 #cell (x,y) north (x,y-1) east (x+1,y) south (x,y+1) west (x-1,y)   
+ 
