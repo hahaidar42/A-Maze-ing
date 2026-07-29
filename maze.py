@@ -13,6 +13,11 @@ class Cell:
 
 
 class Maze:
+
+    RESET = "\033[0m"
+    RED = "\033[41m"
+    GREEN = "\033[42m"
+
     def __init__(self, width: int, height: int, entry: tuple[int, int],
                  exit_pos: tuple[int, int]):
         self.grid: list[list[Cell]] = []
@@ -104,22 +109,22 @@ class Maze:
                     break
                 current = stack.pop()
 
-    def print_ascii(self) -> None:
+    def print_ascii(self, color: str = RESET) -> None:
         for x in range(self.width):
-            print("+---", end="")
-        print("+")
+            print(f"{color}+---{self.RESET}", end="")
+        print(f"{color}+")
         for y in range(self.height):
-            print("|", end="")
+            print(f"{color}|{self.RESET}", end="")
             for x in range(self.width):
                 cell = self.get_cell(x, y)
                 if (x, y) == self.entry:
-                    print(" E ", end="")
+                    print(f" {self.GREEN}E{self.RESET} ", end="")
                 elif (x, y) == self.exit_pos:
-                    print(" X ", end="")
+                    print(f" {self.RED}X{self.RESET} ", end="")
                 else:
                     print("   ", end="")
                 if cell.east_wall:
-                    print("|", end="")
+                    print(f"{color}|{self.RESET}", end="")
                 else:
                     print(" ", end="")
             print()
@@ -127,18 +132,17 @@ class Maze:
             for x in range(self.width):
                 cell = self.get_cell(x, y)
                 if cell.south_wall:
-                    print("+---", end="")
+                    print(f"{color}+---{self.RESET}", end="")
                 else:
-                    print("+   ", end="")
-            print("+")
+                    print(f"{color}+{self.RESET}   ", end="")
+            print(f"{color}+{self.RESET}")
 
     def Pattern42(self) -> None:
         if self.width < 9 or self.height < 7:
             raise ValueError(
                 "Maze dimensions must be at least 9x7 for Pattern42.")
-        midw: int = self.width / 2
-        midh: int = self.height / 2
-        t = []
+        midw: int = self.width // 2
+        midh: int = self.height // 2
         cell1 = self.get_cell(int(midw) - 2, int(midh) - 1)
         cell1.visited = True
         cell2 = self.get_cell(int(midw) - 3, int(midh) - 1)
@@ -187,7 +191,35 @@ class Maze:
                 cell.west_wall = True
                 cell.visited = False
 
-    def build(self, seed: int | None = None, pattern42: bool = False) -> None:
+    def notperfect(self, seed: int | None = None, pattern42: bool = False) -> None:
+        for row in self.grid:
+            for i in row:
+                i.visited = False
+        if pattern42:
+            self.Pattern42()
+        if seed is not None:
+            random.seed(seed)
+        x = random.randint(0, self.width - 1)
+        y = random.randint(0, self.height - 1)
+        current = self.get_cell(x, y)
+        current.visited = True
+        stack: list[Cell] = []
+        while True:
+            neighbors = self.get_unvisited_neighbors(current)
+            if neighbors:
+                direction = random.choice(neighbors)
+                if random.random() < 0.15:
+                    self.remove_wall(current, direction)
+                stack.append(current)
+                current = self.get_neighbor(current, direction)
+                assert current is not None
+                current.visited = True
+            else:
+                if not stack:
+                    break
+                current = stack.pop()
+
+    def build(self, seed: int | None = None, pattern42: bool = False, perfect: bool = True) -> None:
         self.reset()
         if self.entry == self.exit_pos:
             raise ValueError(
@@ -205,3 +237,5 @@ class Maze:
                                 "Exit is in the 42 pattern")
 
         self.generate(seed)
+        if not perfect:
+            self.notperfect(seed, pattern42)
