@@ -101,8 +101,9 @@ class Maze:
                 direction = random.choice(neighbors)
                 self.remove_wall(current, direction)
                 stack.append(current)
-                current = self.get_neighbor(current, direction)
-                assert current is not None
+                next_cell = self.get_neighbor(current, direction)
+                assert next_cell is not None
+                current = next_cell
                 current.visited = True
             else:
                 if not stack:
@@ -206,17 +207,24 @@ class Maze:
         stack: list[Cell] = []
         while True:
             neighbors = self.get_unvisited_neighbors(current)
+
             if neighbors:
                 direction = random.choice(neighbors)
+
                 if random.random() < 0.15:
                     self.remove_wall(current, direction)
+
                 stack.append(current)
-                current = self.get_neighbor(current, direction)
-                assert current is not None
+
+                next_cell = self.get_neighbor(current, direction)
+                assert next_cell is not None
+
+                current = next_cell
                 current.visited = True
             else:
                 if not stack:
                     break
+
                 current = stack.pop()
 
     def build(self, seed: int | None = None, pattern42: bool = False, perfect: bool = True) -> None:
