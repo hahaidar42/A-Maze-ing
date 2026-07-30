@@ -1,6 +1,7 @@
 from maze import Maze
 from parser import parse_config
 from typing import Any
+from solver import solve
 
 config = parse_config("config.txt")
 maze = Maze(
@@ -61,15 +62,21 @@ def interface(colors) -> Any:
                 perfectb: bool = True
             else:
                 perfectb: bool = False
-            maze.build(x, perfectb, patternb)
-            maze.print_ascii(RESET)
+            maze.build(x, patternb, perfectb)
+            maze.print_ascii(colors[colorindex - 1])
         elif choice == 2:
-            print("will be done later")
+            directions, path = solve(maze)
+            if colorindex == 0:
+                maze.printsolved(colors[5], path)
+            else:
+                maze.printsolved(colors[colorindex - 1], path)
+
         elif choice == 3:
-            maze.print_ascii(colors[colorindex])
-            colorindex += 1
             if colorindex > 5:
                 colorindex = 0
+            colorindex += 1
+            maze.print_ascii(colors[colorindex - 1])
+
         elif choice == 4:
             break
         else:
