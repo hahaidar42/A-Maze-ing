@@ -1,6 +1,6 @@
 from collections import deque
 from maze import Maze
-
+from solver import solve
 
 def _can_move(maze: Maze, x: int, y: int, direction: str) -> bool:
     cell = maze.get_cell(x, y)
