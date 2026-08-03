@@ -15,8 +15,10 @@ class Cell:
 class Maze:
 
     RESET = "\033[0m"
-    RED = "\033[41m"
-    GREEN = "\033[42m"
+    RED = "\033[31m"
+    GREEN = "\033[32m"
+    WHITE = "\033[47m"
+    YELLOW = "\033[33m"
 
     def __init__(self, width: int, height: int, entry: tuple[int, int],
                  exit_pos: tuple[int, int]):
@@ -110,7 +112,7 @@ class Maze:
                     break
                 current = stack.pop()
 
-    def print_ascii(self, color: str = RESET) -> None:
+    def print_ascii(self, color: str = RESET, pattern: bool = True) -> None:
         for x in range(self.width):
             print(f"{color}+---{self.RESET}", end="")
         print(f"{color}+")
@@ -119,9 +121,14 @@ class Maze:
             for x in range(self.width):
                 cell = self.get_cell(x, y)
                 if (x, y) == self.entry:
-                    print(f" {self.GREEN}E{self.RESET} ", end="")
+                    print(f"{self.GREEN} E {self.RESET}", end="")
                 elif (x, y) == self.exit_pos:
-                    print(f" {self.RED}X{self.RESET} ", end="")
+                    print(f"{self.RED} X {self.RESET}", end="")
+                elif (x, y) in self.pattern42_coords():
+                    if pattern:
+                        print(f"{self.WHITE}   {self.RESET}", end="")
+                    else:
+                        print("   ", end="")
                 else:
                     print("   ", end="")
                 if cell.east_wall:
@@ -138,10 +145,37 @@ class Maze:
                     print(f"{color}+{self.RESET}   ", end="")
             print(f"{color}+{self.RESET}")
 
+    def pattern42_coords(self) -> list[tuple[int, int]]:
+        if self.width < 9 or self.height < 7:
+            return []
+
+        midw = self.width // 2
+        midh = self.height // 2
+
+        return [
+            (midw - 2, midh - 1),
+            (midw - 3, midh - 1),
+            (midw - 4, midh - 1),
+            (midw - 4, midh - 2),
+            (midw - 4, midh - 3),
+            (midw - 2, midh),
+            (midw - 2, midh + 1),
+            (midw,     midh - 1),
+            (midw,     midh - 3),
+            (midw,     midh),
+            (midw,     midh + 1),
+            (midw + 1, midh + 1),
+            (midw + 2, midh - 2),
+            (midw + 2, midh + 1),
+            (midw + 1, midh - 3),
+            (midw + 2, midh - 3),
+            (midw + 2, midh - 1),
+            (midw + 1, midh - 1),
+        ]
+
     def Pattern42(self) -> None:
         if self.width < 9 or self.height < 7:
-            raise ValueError(
-                "Maze dimensions must be at least 9x7 for Pattern42.")
+            return
         midw: int = self.width // 2
         midh: int = self.height // 2
         cell1 = self.get_cell(int(midw) - 2, int(midh) - 1)
@@ -178,10 +212,8 @@ class Maze:
         cell16.visited = True
         cell17 = self.get_cell(int(midw + 2), int(midh)-1)
         cell17.visited = True
-        cell18 = self.get_cell(int(midw + 2), int(midh)+-1)
+        cell18 = self.get_cell(int(midw + 1), int(midh)-1)
         cell18.visited = True
-        cell19 = self.get_cell(int(midw + 1), int(midh)-1)
-        cell19.visited = True
 
     def reset(self) -> None:
         for row in self.grid:
@@ -248,7 +280,7 @@ class Maze:
         if not perfect:
             self.notperfect(seed, pattern42)
 
-    def printsolved(self, color: str = RESET, path: list[tuple[int, int]] | None = None) -> None :
+    def printsolved(self, color: str = RESET, pattern: bool = True, path: list[tuple[int, int]] | None = None) -> None:
         if path is None:
             path = []
         for x in range(self.width):
@@ -260,11 +292,16 @@ class Maze:
                 cell = self.get_cell(x, y)
 
                 if (x, y) == self.entry:
-                    print(f" {self.GREEN}E{self.RESET} ", end="")
+                    print(f"{self.GREEN} E {self.RESET}", end="")
                 elif (x, y) == self.exit_pos:
-                    print(f" {self.RED}X{self.RESET} ", end="")
+                    print(f"{self.RED} X {self.RESET}", end="")
                 elif (x, y) in path:
-                    print(" . ", end="")
+                    print(f"{self.YELLOW} * {self.RESET}", end="")
+                elif (x, y) in self.pattern42_coords():
+                    if pattern:
+                        print(f"{self.WHITE}   {self.RESET}", end="")
+                    else:
+                        print("   ", end="")
                 else:
                     print("   ", end="")
                 if cell.east_wall:
