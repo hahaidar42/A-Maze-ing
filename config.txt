@@ -2,16 +2,16 @@
 #width=20
 #height=15
 #entry=0,0
-#exit=19,14
+#exit=0,29
 #output_file=maze.txt
 #perfect=True
 #seed=42
 
 
-WIDTH=15
-HEIGHT=10
-ENTRY=0,9
-EXIT= 9,0
+WIDTH=12
+HEIGHT=12
+ENTRY=0,0
+EXIT= 4,4
 OUTPUT_FILE=maze.txt
 PERFECT=True
 SEED=42
