@@ -77,6 +77,7 @@ def interface(colors) -> Any:
                 perfectb: bool = False
             maze.build(seed, patternb, perfectb)
             maze.print_ascii(colors[colorindex], patternb)
+            solved = False
         elif choice == 2:
             directions, path = solve(maze)
             if solved:
