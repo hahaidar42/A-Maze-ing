@@ -247,3 +247,36 @@ class Maze:
         self.generate(seed)
         if not perfect:
             self.notperfect(seed, pattern42)
+
+    def printsolved(self, color: str = RESET, path: list[tuple[int, int]] | None = None) -> None :
+        if path is None:
+            path = []
+        for x in range(self.width):
+            print(f"{color}+---{self.RESET}", end="")
+        print(f"{color}+")
+        for y in range(self.height):
+            print(f"{color}|{self.RESET}", end="")
+            for x in range(self.width):
+                cell = self.get_cell(x, y)
+
+                if (x, y) == self.entry:
+                    print(f" {self.GREEN}E{self.RESET} ", end="")
+                elif (x, y) == self.exit_pos:
+                    print(f" {self.RED}X{self.RESET} ", end="")
+                elif (x, y) in path:
+                    print(" . ", end="")
+                else:
+                    print("   ", end="")
+                if cell.east_wall:
+                    print(f"{color}|{self.RESET}", end="")
+                else:
+                    print(" ", end="")
+            print()
+
+            for x in range(self.width):
+                cell = self.get_cell(x, y)
+                if cell.south_wall:
+                    print(f"{color}+---{self.RESET}", end="")
+                else:
+                    print(f"{color}+{self.RESET}   ", end="")
+            print(f"{color}+{self.RESET}")

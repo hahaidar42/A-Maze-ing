@@ -1,6 +1,6 @@
 from maze import Maze, Cell
+from solver import solve
 
-#hex 0123456789abcdef
 
 def cell_to_hex(cell: Cell) -> str:
     value = 0
@@ -45,3 +45,8 @@ def write_maze_file(maze: Maze, filepath: str) -> None:
             f.write(line + "\n")
 # Bit 3 (West)  |  Bit 2 (South)  |  Bit 1 (East)  |  Bit 0 (North)
 #      8        +       4         +       2        +       1        =  0-15
+
+# if __name__ == "__main__":
+#     maze = Maze(10, 10, (0, 0), (4, 4))
+#     maze.build(seed=42)
+#     write_maze_file(maze, "output.txt")
