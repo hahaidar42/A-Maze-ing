@@ -4,7 +4,9 @@ from typing import Any
 from solver import solve
 from converter import write_maze_file
 
+
 config = parse_config("config.txt")
+output_file = config["OUTPUT_FILE"]
 maze = Maze(
     config["WIDTH"],
     config["HEIGHT"],
@@ -22,21 +24,16 @@ WHITE = "\033[37m"
 PINK = "\033[38;5;217m"
 
 colors = (RESET, RED, GREEN, BLUE, YELLOW, WHITE, PINK)
-# maze.build(None, True, True)
-# maze.print_ascii(YELLOW)
 
 
-def interface(colors) -> Any:
+def main(colors) -> Any:
     maze.build(None, True, True)
     colorindex: int = 0
-<<<<<<< HEAD
-    write_maze_file(maze, "output.txt")
-=======
+    write_maze_file(maze, output_file)
     maze.print_ascii(colors[colorindex], True)
     patternb: bool = True
     seed: int | None = None
     solved: bool = False
->>>>>>> fe7c41e19ae37a37f9d9e709217c8beb93d0ba58
     while True:
         print("=== A-MAZE-ing ===")
         print("1. Re-generate a new maze")
@@ -107,4 +104,4 @@ def interface(colors) -> Any:
             print("You entered an unsupported number choose between 1-4")
 
 
-interface(colors)
+main(colors)

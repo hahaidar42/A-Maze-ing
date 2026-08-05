@@ -146,7 +146,7 @@ class Maze:
             print(f"{color}+{self.RESET}")
 
     def pattern42_coords(self) -> list[tuple[int, int]]:
-        if self.width < 9 or self.height < 7:
+        if self.width < 8 or self.height < 6:
             return []
 
         midw = self.width // 2
@@ -174,7 +174,8 @@ class Maze:
         ]
 
     def Pattern42(self) -> None:
-        if self.width < 9 or self.height < 7:
+        if self.width < 8 or self.height < 6:
+            print("Warning: maze is too small for the 42 pattern. Pattern will be skipped.")
             return
         midw: int = self.width // 2
         midh: int = self.height // 2

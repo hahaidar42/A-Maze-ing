@@ -111,18 +111,3 @@ def solve(maze: Maze) -> tuple[str, list[tuple[int, int]]]:
         directions.append(direction)
 
     return "".join(directions), path
-
-
-def main() -> None:
-    maze = Maze(5, 5, (0, 0), (4, 4))
-    maze.build(seed=42)
-    maze.print_ascii()
-
-    directions, path = solve(maze)
-    print(f"\nPath: {path}")
-    print(f"Directions: {directions}")
-    print(f"Steps: {len(path) - 1}")
-
-
-if __name__ == "__main__":
-    main()
