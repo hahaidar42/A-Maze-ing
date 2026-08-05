@@ -1,4 +1,4 @@
-import sys
+
 from typing import Dict, Tuple, Union, Optional
 
 
@@ -59,10 +59,13 @@ def parse_coords(value: str) -> Tuple[int, int]:
         return (int(x.strip()), int(y.strip()))
     except ValueError as error:
         raise ValueError(
-            f"invalid coordinate format, expected 'x,y' got '{value}'") from error
+            f"invalid coordinate format,"
+            f" expected 'x,y' got '{value}'") from error
 
 
-def parse_config(filepath: str) -> Dict[str, Union[int, str, Tuple[int, int], bool, Optional[int]]]:
+def parse_config(filepath: str) -> Dict[str,
+                                        Union[int, str, Tuple[int, int],
+                                              bool, Optional[int]]]:
     """Parse and validate configuration file.
 
     Args:
