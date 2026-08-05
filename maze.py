@@ -67,7 +67,8 @@ class Maze:
         cell2 = self.get_neighbor(cell1, direction)
         if cell2 is None:
             raise ValueError(
-                f"Cannot remove wall in direction {direction} from cell ({cell1.x}, {cell1.y}) - out of bounds.")
+                f"Cannot remove wall in direction {direction} from "
+                f"cell ({cell1.x}, {cell1.y}) - out of bounds.")
         if direction == "N":
             cell1.north_wall = False
             cell2.south_wall = False
@@ -103,8 +104,9 @@ class Maze:
                 direction = random.choice(neighbors)
                 self.remove_wall(current, direction)
                 stack.append(current)
-                current = self.get_neighbor(current, direction)
-                assert current is not None
+                next_cell = self.get_neighbor(current, direction)
+                assert next_cell is not None
+                current = next_cell
                 current.visited = True
             else:
                 if not stack:
@@ -145,7 +147,7 @@ class Maze:
             print(f"{color}+{self.RESET}")
 
     def pattern42_coords(self) -> list[tuple[int, int]]:
-        if self.width < 9 or self.height < 7:
+        if self.width < 8 or self.height < 6:
             return []
 
         midw = self.width // 2
@@ -173,7 +175,10 @@ class Maze:
         ]
 
     def Pattern42(self) -> None:
-        if self.width < 9 or self.height < 7:
+        if self.width < 8 or self.height < 6:
+            print(
+                "Warning: maze is too small for the 42"
+                " pattern. Pattern will be skipped.")
             return
         midw: int = self.width // 2
         midh: int = self.height // 2
@@ -223,7 +228,8 @@ class Maze:
                 cell.west_wall = True
                 cell.visited = False
 
-    def notperfect(self, seed: int | None = None, pattern42: bool = False) -> None:
+    def notperfect(self, seed: int | None = None,
+                   pattern42: bool = False) -> None:
         for row in self.grid:
             for i in row:
                 i.visited = False
@@ -238,20 +244,28 @@ class Maze:
         stack: list[Cell] = []
         while True:
             neighbors = self.get_unvisited_neighbors(current)
+
             if neighbors:
                 direction = random.choice(neighbors)
+
                 if random.random() < 0.15:
                     self.remove_wall(current, direction)
+
                 stack.append(current)
-                current = self.get_neighbor(current, direction)
-                assert current is not None
+
+                next_cell = self.get_neighbor(current, direction)
+                assert next_cell is not None
+
+                current = next_cell
                 current.visited = True
             else:
                 if not stack:
                     break
+
                 current = stack.pop()
 
-    def build(self, seed: int | None = None, pattern42: bool = False, perfect: bool = True) -> None:
+    def build(self, seed: int | None = None,
+              pattern42: bool = False, perfect: bool = True) -> None:
         self.reset()
         if self.entry == self.exit_pos:
             raise ValueError(
@@ -272,7 +286,8 @@ class Maze:
         if not perfect:
             self.notperfect(seed, pattern42)
 
-    def printsolved(self, color: str = RESET, pattern: bool = True, path: list[tuple[int, int]] | None = None) -> None:
+    def printsolved(self, color: str = RESET, pattern: bool = True,
+                    path: list[tuple[int, int]] | None = None) -> None:
         if path is None:
             path = []
         for x in range(self.width):
