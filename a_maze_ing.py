@@ -5,28 +5,24 @@ from solver import solve
 from converter import write_maze_file
 
 
-config = parse_config("config.txt")
-output_file = config["OUTPUT_FILE"]
-maze = Maze(
-    config["WIDTH"],
-    config["HEIGHT"],
-    config["ENTRY"],
-    config["EXIT"],
-)
-
 RESET = "\033[0m"
-
 RED = "\033[31m"
 GREEN = "\033[32m"
 BLUE = "\033[34m"
 YELLOW = "\033[33m"
 WHITE = "\033[37m"
 PINK = "\033[38;5;217m"
-
 colors = (RESET, RED, GREEN, BLUE, YELLOW, WHITE, PINK)
 
-
 def main(colors) -> Any:
+    config = parse_config("config.txt")
+    output_file = config["OUTPUT_FILE"]
+    maze = Maze(
+        config["WIDTH"],
+        config["HEIGHT"],
+        config["ENTRY"],
+        config["EXIT"],
+    )
     maze.build(None, True, True)
     colorindex: int = 0
     write_maze_file(maze, output_file)
@@ -103,5 +99,11 @@ def main(colors) -> Any:
         else:
             print("You entered an unsupported number choose between 1-4")
 
+if __name__ == "__main__":
+    try:
+        main(colors)
 
-main(colors)
+    except KeyboardInterrupt:
+        print("\ninvalid input")
+    except Exception as e:
+        print(e)

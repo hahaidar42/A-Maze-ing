@@ -121,6 +121,9 @@ def parse_config(filepath: str) -> Dict[str, Union[int, str, Tuple[int, int], bo
     if entry == exit_coords:
         raise ValueError(f"Entry and exit must be different, both are {entry}")
 
+    if output_file == "config.txt":
+        raise ValueError(f"invalid name for output file {output_file}")
+
     return {
         "WIDTH": width,
         "HEIGHT": height,
