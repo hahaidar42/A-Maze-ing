@@ -8,14 +8,18 @@ from converter import write_maze_file
 def main() -> Any:
     config = parse_config("config.txt")
     output_file = config["OUTPUT_FILE"]
+    width: int = config["WIDTH"]
+    height: int = config["HEIGHT"]
+    entry: tuple[int, int] = config["ENTRY"]
+    exit_: tuple[int, int] = config["EXIT"]
     maze = Maze(
-        config["WIDTH"],
-        config["HEIGHT"],
-        config["ENTRY"],
-        config["EXIT"],
+        width,
+        height,
+        entry,
+        exit_,
     )
     if (config["SEED"] is not None):
-        seed = config["SEED"]
+        seed: int | None = config["SEED"]
     else:
         seed = None
 
@@ -107,4 +111,9 @@ def main() -> Any:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nExiting...")
+    except Exception as e:
+        print(f"An error occurred: {e}")
