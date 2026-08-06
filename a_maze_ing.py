@@ -12,6 +12,7 @@ def main() -> Any:
     height: int = config["HEIGHT"]
     entry: tuple[int, int] = config["ENTRY"]
     exit_: tuple[int, int] = config["EXIT"]
+    perfect: bool = config["PERFECT"]
     maze = Maze(
         width,
         height,
@@ -32,7 +33,7 @@ def main() -> Any:
     PINK = "\033[38;5;217m"
 
     colors = (RESET, RED, GREEN, BLUE, YELLOW, WHITE, PINK)
-    maze.build(seed, True, True)
+    maze.build(seed, True, perfect)
     colorindex: int = 0
     write_maze_file(maze, output_file)
     maze.print_ascii(colors[colorindex], True)
@@ -52,38 +53,9 @@ def main() -> Any:
             continue
 
         if choice == 1:
-            b: bool = True
-            while b:
-                x = input("Enter a seed or leave it "
-                          "empty for a random Maze: ")
-                if x == "":
-                    seed = None
-                    b = False
-                else:
-                    try:
-                        seed = int(x)
-                        b = False
-                    except ValueError:
-                        print("Please enter a valid integer"
-                              " or leave it empty.")
-                        continue
-
-            perfecto: str = "x"
-            patterno: str = "x"
-            while perfecto not in ("n", "y"):
-                perfecto = input("Do you want your maze to be perfect (y/n): ")
-            while patterno != "y" and patterno != "n":
-                patterno: str = input("Do you want to add a 42 pattern"
-                                      " to your maze (y/n): ")
-            if patterno == "y":
-                patternb: bool = True
-            else:
-                patternb: bool = False
-            if perfecto == "y":
-                perfectb: bool = True
-            else:
-                perfectb: bool = False
-            maze.build(seed, patternb, perfectb)
+            if seed:
+                seed += 1
+            maze.build(seed, True, perfect)
             maze.print_ascii(colors[colorindex], patternb)
             solved = False
         elif choice == 2:

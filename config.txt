@@ -1,19 +1,7 @@
-# This is a comment
-#width=20
-#height=15
-#entry=0,0
-#exit=0,29
-#output_file=maze.txt
-#perfect=True
-#seed=42
-
-
-WIDTH=20
+WIDTH=15
 HEIGHT=15
-
-
-ENTRY=0,0
-EXIT= 17,10
-OUTPUT_FILE=config.txt
-PERFECT=True
-SEED=42
+ENTRY=1,0
+EXIT=14,14
+OUTPUT_FILE=maze.txt
+PERFECT=False
+SEED=90
