@@ -1,17 +1,18 @@
 from maze import Maze
 from parser import parse_config
-from typing import Any
+from typing import Any, cast
 from solver import solve
 from converter import write_maze_file
 
 
 def main() -> Any:
     config = parse_config("config.txt")
-    output_file = config["OUTPUT_FILE"]
-    width: int = config["WIDTH"]
-    height: int = config["HEIGHT"]
-    entry: tuple[int, int] = config["ENTRY"]
-    exit_: tuple[int, int] = config["EXIT"]
+    output_file = cast(str, config["OUTPUT_FILE"])
+    width: int = cast(int, config["WIDTH"])
+    height: int = cast(int, config["HEIGHT"])
+    entry: tuple[int, int] = cast(tuple[int, int], config["ENTRY"])
+    exit_: tuple[int, int] = cast(tuple[int, int], config["EXIT"])
+    perfect: bool = cast(bool, config["PERFECT"])
     maze = Maze(
         width,
         height,
@@ -19,7 +20,7 @@ def main() -> Any:
         exit_,
     )
     if config["SEED"] is not None:
-        seed: int | None = config["SEED"]
+        seed = cast(int | None, config["SEED"])
     else:
         seed = None
 
@@ -32,7 +33,7 @@ def main() -> Any:
     PINK = "\033[38;5;217m"
 
     colors = (RESET, RED, GREEN, BLUE, YELLOW, WHITE, PINK)
-    maze.build(seed, True, True)
+    maze.build(seed, True, perfect)
     colorindex: int = 0
     write_maze_file(maze, output_file)
     maze.print_ascii(colors[colorindex], True)
@@ -52,38 +53,9 @@ def main() -> Any:
             continue
 
         if choice == 1:
-            b: bool = True
-            while b:
-                x = input("Enter a seed or leave it "
-                          "empty for a random Maze: ")
-                if x == "":
-                    seed = None
-                    b = False
-                else:
-                    try:
-                        seed = int(x)
-                        b = False
-                    except ValueError:
-                        print("Please enter a valid integer"
-                              " or leave it empty.")
-                        continue
-
-            perfecto: str = "x"
-            patterno: str = "x"
-            while perfecto not in ("n", "y"):
-                perfecto = input("Do you want your maze to be perfect (y/n): ")
-            while patterno != "y" and patterno != "n":
-                patterno: str = input("Do you want to add a 42 pattern"
-                                      " to your maze (y/n): ")
-            if patterno == "y":
-                patternb: bool = True
-            else:
-                patternb: bool = False
-            if perfecto == "y":
-                perfectb: bool = True
-            else:
-                perfectb: bool = False
-            maze.build(seed, patternb, perfectb)
+            if seed:
+                seed += 1
+            maze.build(seed, True, perfect)
             maze.print_ascii(colors[colorindex], patternb)
             solved = False
         elif choice == 2:
