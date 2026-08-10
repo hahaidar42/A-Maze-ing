@@ -7,6 +7,25 @@ import os
 
 
 def main() -> Any:
+    """
+    Main application loop for the maze generator.
+
+    Reads configuration, generates the maze, and provides an interactive
+    terminal menu for controlling the maze display.
+
+    Features:
+        - Maze regeneration with optional seed increment
+        - Toggle path display
+        - Rotate wall colors
+        - Graceful exit
+
+    Returns:
+        Any: The application exits with no return value.
+
+    Raises:
+        KeyboardInterrupt: Handled gracefully with a user message.
+        Exception: General exceptions are caught and displayed.
+    """
     config = parse_config("config.txt")
     output_file = cast(str, config["OUTPUT_FILE"])
     width: int = cast(int, config["WIDTH"])

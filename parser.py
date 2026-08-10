@@ -141,7 +141,3 @@ def parse_config(filepath: str) -> Dict[str,
         "SEED": seed,
         "ALGO": algo
     }
-
-
-if __name__ == "__main__":
-    print(parse_config("config.txt"))

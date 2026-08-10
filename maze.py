@@ -4,7 +4,30 @@ import time
 
 
 class Cell:
+    """
+    Represents a single cell in the maze grid.
+
+    Each cell maintains its wall states (North, East, South, West) and a
+    visited flag for maze generation algorithms.
+
+    Attributes:
+        x (int): X-coordinate of the cell in the grid.
+        y (int): Y-coordinate of the cell in the grid.
+        north_wall (bool): True if the north wall is present (closed).
+        east_wall (bool): True if the east wall is present (closed).
+        south_wall (bool): True if the south wall is present (closed).
+        west_wall (bool): True if the west wall is present (closed).
+        visited (bool): Used during maze generation to track visited cells.
+    """
+
     def __init__(self, x: int, y: int):
+        """
+        Initialize a new Cell with all walls closed and unvisited.
+
+        Args:
+            x: X-coordinate of the cell in the grid.
+            y: Y-coordinate of the cell in the grid.
+        """
         self.x: int = x
         self.y: int = y
         self.north_wall: bool = True
@@ -15,6 +38,27 @@ class Cell:
 
 
 class Maze:
+    """
+    Represents a maze grid with generation and visualization capabilities.
+
+    This class provides functionality for generating perfect and non-perfect
+    mazes using various algorithms, visualizing them in the terminal, and
+    managing the required "42" pattern.
+
+    Attributes:
+        grid (list[list[Cell]]): 2D grid of Cell objects.
+        width (int): Number of cells in the x-direction.
+        height (int): Number of cells in the y-direction.
+        entry (tuple[int, int]): (x, y) coordinates of the maze entry.
+        exit_pos (tuple[int, int]): (x, y) coordinates of the maze exit.
+
+    Class Attributes:
+        RESET (str): ANSI reset code for terminal colors.
+        RED (str): ANSI red color code.
+        GREEN (str): ANSI green color code.
+        WHITE (str): ANSI white background color code.
+        YELLOW (str): ANSI yellow color code.
+    """
 
     RESET = "\033[0m"
     RED = "\033[31m"
@@ -24,6 +68,18 @@ class Maze:
 
     def __init__(self, width: int, height: int, entry: tuple[int, int],
                  exit_pos: tuple[int, int]):
+        """
+        Initialize a new empty maze grid.
+
+        Args:
+            width: Number of cells in the x-direction.
+            height: Number of cells in the y-direction.
+            entry: (x, y) coordinates of the maze entry.
+            exit_pos: (x, y) coordinates of the maze exit.
+
+        Raises:
+            ValueError: If entry and exit are the same.
+        """
         self.grid: list[list[Cell]] = []
         self.width: int = width
         self.height: int = height
@@ -36,16 +92,52 @@ class Maze:
             self.grid.append(row)
 
     def is_inside(self, x: int, y: int) -> bool:
+        """
+        Check if a given coordinate is within the maze bounds.
+
+        Args:
+            x: X-coordinate to check.
+            y: Y-coordinate to check.
+
+        Returns:
+            True if the coordinate is inside the maze, False otherwise.
+        """
         if 0 <= x < self.width and 0 <= y < self.height:
             return True
         return False
 
     def get_cell(self, x: int, y: int) -> Cell:
+        """
+        Get the cell at the specified coordinates.
+
+        Args:
+            x: X-coordinate of the cell.
+            y: Y-coordinate of the cell.
+
+        Returns:
+            The Cell object at the specified coordinates.
+
+        Raises:
+            ValueError: If the coordinates are out of bounds.
+        """
         if not self.is_inside(x, y):
             raise ValueError(f"Cell coordinates ({x}, {y}) are out of bounds.")
         return self.grid[y][x]
 
     def get_neighbor(self, cell: Cell, direction: str) -> Cell | None:
+        """
+        Get the neighboring cell in a given direction.
+
+        Args:
+            cell: The reference cell.
+            direction: One of 'N', 'E', 'S', 'W' (North, East, South, West).
+
+        Returns:
+            The neighboring Cell if it exists, None if out of bounds.
+
+        Raises:
+            ValueError: If an invalid direction is provided.
+        """
         if direction == "N":
             if not self.is_inside(cell.x, cell.y - 1):
                 return None
@@ -66,6 +158,22 @@ class Maze:
             raise ValueError(f"Invalid direction: {direction}")
 
     def remove_wall(self, cell1: Cell, direction: str) -> bool:
+        """
+        Remove the wall between two adjacent cells.
+
+        This method removes the wall in the specified direction from cell1
+        and the corresponding wall from the neighboring cell.
+
+        Args:
+            cell1: The cell from which to remove a wall.
+            direction: The direction of the wall to remove ('N', 'E', 'S', 'W').
+
+        Returns:
+            True if the wall was removed, False if it was already open.
+
+        Raises:
+            ValueError: If the neighbor is out of bounds.
+        """
         cell2 = self.get_neighbor(cell1, direction)
         if cell2 is None:
             raise ValueError(
@@ -94,6 +202,16 @@ class Maze:
         return False
 
     def get_unvisited_neighbors(self, cell: Cell) -> list[str]:
+        """
+        Get directions to unvisited neighboring cells.
+
+        Args:
+            cell: The cell to check.
+
+        Returns:
+            A list of directions ('N', 'E', 'S', 'W') where the neighbor
+            exists and has not been visited.
+        """
         unvisited_neighbors = []
         for direction in ["N", "E", "S", "W"]:
             neighbor = self.get_neighbor(cell, direction)
@@ -103,6 +221,18 @@ class Maze:
 
     def animate_path(self, path: list[tuple[int, int]],
                      color: str = RESET) -> None:
+        """
+        Animate the display of a path through the maze.
+
+        The path is revealed step by step with a delay between steps.
+
+        Args:
+            path: List of (x, y) coordinates representing the path.
+            color: ANSI color code for the maze walls.
+
+        Returns:
+            None
+        """
         self.printsolved(path=[path[0]], color=color)
 
         for i in range(1, len(path)):
@@ -113,6 +243,16 @@ class Maze:
             self.printsolved(path=path[:i+1], color=color)
 
     def get_visited_neighbors(self, cell: Cell) -> list[str]:
+        """
+        Get directions to visited neighboring cells.
+
+        Args:
+            cell: The cell to check.
+
+        Returns:
+            A list of directions ('N', 'E', 'S', 'W') where the neighbor
+            exists and has been visited.
+        """
         visited_neighbors = []
         for direction in ["N", "E", "S", "W"]:
             neighbor = self.get_neighbor(cell, direction)
@@ -121,6 +261,18 @@ class Maze:
         return visited_neighbors
 
     def primgeneration(self, seed: int | None = None) -> None:
+        """
+        Generate a maze using Prim's algorithm.
+
+        Prim's algorithm works by maintaining a frontier of cells adjacent to
+        the visited set, and randomly adding cells from the frontier.
+
+        Args:
+            seed: Optional seed for reproducible random generation.
+
+        Returns:
+            None
+        """
         if seed is not None:
             random.seed(seed)
         frontier: list[Cell] = []
@@ -166,6 +318,19 @@ class Maze:
                     current = ranfrontier
 
     def generate(self, seed: int | None = None) -> None:
+        """
+        Generate a perfect maze using recursive backtracking (DFS).
+
+        This is the primary maze generation algorithm. It creates a perfect
+        maze (unique path between any two points) by performing a depth-first
+        traversal of the grid.
+
+        Args:
+            seed: Optional seed for reproducible random generation.
+
+        Returns:
+            None
+        """
         if seed is not None:
             random.seed(seed)
         while True:
@@ -192,6 +357,17 @@ class Maze:
                 current = stack.pop()
 
     def print_ascii(self, color: str = RESET, pattern: bool = True) -> None:
+        """
+        Print the maze in ASCII format to the terminal.
+
+        The maze is displayed with walls represented as +--- and | characters.
+        The entry is marked with 'E' in green, the exit with 'X' in red,
+        and the "42" pattern cells are highlighted in white.
+
+        Args:
+            color: ANSI color code for the maze walls.
+            pattern: If True, display the "42" pattern in white.
+        """
         for x in range(self.width):
             print(f"{color}+---{self.RESET}", end="")
         print(f"{color}+")
@@ -225,6 +401,15 @@ class Maze:
             print(f"{color}+{self.RESET}")
 
     def pattern42_coords(self) -> list[tuple[int, int]]:
+        """
+        Get the coordinates of cells that form the "42" pattern.
+
+        The pattern is centered in the maze and forms the digits "42".
+        If the maze is too small (< 8x6), an empty list is returned.
+
+        Returns:
+            A list of (x, y) coordinates for the "42" pattern cells.
+        """
         if self.width < 8 or self.height < 6:
             return []
 
@@ -253,6 +438,15 @@ class Maze:
         ]
 
     def has_3x3_open_space(self) -> bool:
+        """
+        Check if the maze contains a 3x3 open space (no walls).
+
+        This is used for non-perfect maze generation to ensure corridors
+        are not wider than 2 cells.
+
+        Returns:
+            True if a 3x3 open space exists, False otherwise.
+        """
         for row in self.grid:
             for cell in row:
                 # center cell must have no walls
@@ -279,6 +473,15 @@ class Maze:
         return False
 
     def Pattern42(self) -> None:
+        """
+        Mark cells that form the "42" pattern as visited.
+
+        This prevents the maze generation algorithm from modifying the walls
+        of these cells, ensuring the pattern remains visible.
+
+        The pattern is centered in the maze. If the maze is too small
+        (< 8x6), the pattern is skipped.
+        """
         if self.width < 8 or self.height < 6:
             return
         midw: int = self.width // 2
@@ -321,6 +524,11 @@ class Maze:
         cell18.visited = True
 
     def reset(self) -> None:
+        """
+        Reset all cells in the maze to their initial state.
+
+        All walls are closed and all cells are marked as unvisited.
+        """
         for row in self.grid:
             for cell in row:
                 cell.north_wall = True
@@ -331,6 +539,16 @@ class Maze:
 
     def notperfect(self, seed: int | None = None,
                    pattern42: bool = False) -> None:
+        """
+        Add extra passages to create a non-perfect maze.
+
+        This method modifies the maze to have multiple paths by adding
+        additional openings with a 15% probability during generation.
+
+        Args:
+            seed: Optional seed for reproducible random generation.
+            pattern42: If True, preserve the "42" pattern cells.
+        """
         newseed: int | None = seed
         if self.width == 1 or self.height == 1:
             return
@@ -381,6 +599,23 @@ class Maze:
     def build(self, seed: int | None = None,
               pattern42: bool = False,
               perfect: bool = True, algo: str = "DFS") -> None:
+        """
+        Build the maze with the specified parameters.
+
+        This is the main entry point for maze generation. It resets the maze,
+        validates entry and exit positions, optionally applies the "42" pattern,
+        generates the maze using the specified algorithm, and handles perfect
+        vs non-perfect maze generation.
+
+        Args:
+            seed: Optional seed for reproducible random generation.
+            pattern42: If True, include the "42" pattern in the maze.
+            perfect: If True, generate a perfect maze (unique path).
+            algo: The generation algorithm to use ('DFS' or 'PRIM').
+
+        Raises:
+            ValueError: If entry or exit is inside the "42" pattern.
+        """
         self.reset()
         if self.entry == self.exit_pos:
             raise ValueError(
@@ -410,6 +645,17 @@ class Maze:
 
     def printsolved(self, color: str = RESET, pattern: bool = True,
                     path: list[tuple[int, int]] | None = None) -> None:
+        """
+        Print the maze with a solution path highlighted.
+
+        The path is marked with '*' in yellow. Entry and exit are shown
+        as 'E' (green) and 'X' (red) respectively.
+
+        Args:
+            color: ANSI color code for the maze walls.
+            pattern: If True, display the "42" pattern in white.
+            path: List of (x, y) coordinates representing the solution path.
+        """
         if path is None:
             path = []
         for x in range(self.width):
