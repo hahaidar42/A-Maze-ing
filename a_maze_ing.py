@@ -14,6 +14,7 @@ def main() -> Any:
     entry: tuple[int, int] = cast(tuple[int, int], config["ENTRY"])
     exit_: tuple[int, int] = cast(tuple[int, int], config["EXIT"])
     perfect: bool = cast(bool, config["PERFECT"])
+    algo: str = cast(str, config["ALGO"])
     maze = Maze(
         width,
         height,
@@ -35,7 +36,7 @@ def main() -> Any:
     PINK = "\033[38;5;217m"
 
     colors = (RESET, RED, GREEN, BLUE, YELLOW, WHITE, PINK)
-    maze.build(seed, True, perfect)
+    maze.build(seed, True, perfect, algo)  # need to add algo
     colorindex: int = 0
     write_maze_file(maze, output_file)
     maze.print_ascii(colors[colorindex], True)
@@ -58,7 +59,7 @@ def main() -> Any:
             os.system("cls" if os.name == "nt" else "clear")
             if seed:
                 seed += 1
-            maze.build(seed, True, perfect)
+            maze.build(seed, True, perfect, algo)  # need to add algo
             maze.print_ascii(colors[colorindex], patternb)
             solved = False
 

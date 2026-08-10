@@ -101,15 +101,69 @@ class Maze:
                 unvisited_neighbors.append(direction)
         return unvisited_neighbors
 
-    def animate_path(self, path: list[tuple[int, int]], color: str = RESET) -> None:
-            self.printsolved(path=[path[0]],color=color)
+    def animate_path(self, path: list[tuple[int, int]],
+                     color: str = RESET) -> None:
+        self.printsolved(path=[path[0]], color=color)
 
-            for i in range(1, len(path)):
-                time.sleep(0.05)
+        for i in range(1, len(path)):
+            time.sleep(0.05)
 
-                os.system("cls" if os.name == "nt" else "clear")
+            os.system("cls" if os.name == "nt" else "clear")
 
-                self.printsolved(path=path[:i+1], color=color)
+            self.printsolved(path=path[:i+1], color=color)
+
+    def get_visited_neighbors(self, cell: Cell) -> list[str]:
+        visited_neighbors = []
+        for direction in ["N", "E", "S", "W"]:
+            neighbor = self.get_neighbor(cell, direction)
+            if neighbor and neighbor.visited:
+                visited_neighbors.append(direction)
+        return visited_neighbors
+
+    def primgeneration(self, seed: int | None = None) -> None:
+        if seed is not None:
+            random.seed(seed)
+        frontier: list[Cell] = []
+        while True:
+            x = random.randint(0, self.width - 1)
+            y = random.randint(0, self.height - 1)
+            current = self.get_cell(x, y)
+            if not current.visited:
+                break
+        current.visited = True
+        directions: list[str] = self.get_unvisited_neighbors(current)
+        for i in directions:
+            neighbor = self.get_neighbor(current, i)
+            if neighbor:
+                frontier.append(neighbor)
+        while frontier:
+            for i in directions:
+                neighbor = self.get_neighbor(current, i)
+                if (neighbor and not neighbor.visited
+                        and neighbor not in frontier
+                        and (neighbor.x, neighbor.y)
+                        not in self.pattern42_coords()):
+                    frontier.append(neighbor)
+            checkpattern: bool = True
+            while checkpattern:
+                ranfrontier = random.choice(frontier)
+                visited_neighbors = self.get_visited_neighbors(ranfrontier)
+                if not visited_neighbors:
+                    frontier.remove(ranfrontier)
+                    continue
+                direction = random.choice(visited_neighbors)
+                newvisted = self.get_neighbor(ranfrontier, direction)
+                if newvisted is None:
+                    frontier.remove(ranfrontier)
+                    continue
+                if (newvisted.x, newvisted.y) in self.pattern42_coords():
+                    frontier.remove(ranfrontier)
+                    continue
+                if (newvisted.x, newvisted.y) not in self.pattern42_coords():
+                    self.remove_wall(ranfrontier, direction)
+                    ranfrontier.visited = True
+                    frontier.remove(ranfrontier)
+                    current = ranfrontier
 
     def generate(self, seed: int | None = None) -> None:
         if seed is not None:
@@ -325,7 +379,8 @@ class Maze:
                 break
 
     def build(self, seed: int | None = None,
-              pattern42: bool = False, perfect: bool = True) -> None:
+              pattern42: bool = False,
+              perfect: bool = True, algo: str = "DFS") -> None:
         self.reset()
         if self.entry == self.exit_pos:
             raise ValueError(
@@ -346,7 +401,10 @@ class Maze:
                             raise ValueError(
                                 "Exit is in the 42 pattern")
 
-        self.generate(seed)
+        if algo == "DFS":
+            self.generate(seed)
+        else:
+            self.primgeneration(seed)
         if not perfect:
             self.notperfect(seed, pattern42)
 

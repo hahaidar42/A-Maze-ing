@@ -96,7 +96,7 @@ def parse_config(filepath: str) -> Dict[str,
     except FileNotFoundError:
         raise FileNotFoundError(f"configuration file '{filepath}' not found")
 
-    required = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT", "ALGO"}
+    required = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"}
     missing = required - config.keys()
     if missing:
         raise ValueError(f"Missing required keys: {missing}")
@@ -108,6 +108,10 @@ def parse_config(filepath: str) -> Dict[str,
     perfect = parse_bool(config["PERFECT"])
     output_file = config["OUTPUT_FILE"].strip()
     seed = parse_int(config["SEED"]) if "SEED" in config else None
+    algo = config["ALGO"] if "ALGO" in config else "DFS"
+    if algo != "DFS" and algo != "PRIM":
+        raise ValueError(
+            "choose one of the valid algo options 'DFS' OR 'PRIM'")
 
     if width <= 0 or height <= 0:
         raise ValueError(
@@ -134,5 +138,10 @@ def parse_config(filepath: str) -> Dict[str,
         "EXIT": exit_coords,
         "OUTPUT_FILE": output_file,
         "PERFECT": perfect,
-        "SEED": seed
+        "SEED": seed,
+        "ALGO": algo
     }
+
+
+if __name__ == "__main__":
+    print(parse_config("config.txt"))
