@@ -1,8 +1,8 @@
 from collections import deque
-from maze import Maze
+from mazegen.maze import MazeGenerator
 
 
-def _can_move(maze: Maze, x: int, y: int, direction: str) -> bool:
+def _can_move(maze: MazeGenerator, x: int, y: int, direction: str) -> bool:
     cell = maze.get_cell(x, y)
     neighbor = maze.get_neighbor(cell, direction)
     if neighbor is None:
@@ -21,7 +21,7 @@ def _can_move(maze: Maze, x: int, y: int, direction: str) -> bool:
 
 
 def get_reachable_neighbors(
-    maze: Maze,
+    maze: MazeGenerator,
     x: int,
     y: int
 ) -> list[tuple[int, int]]:
@@ -62,7 +62,7 @@ def _coords_to_direction(
     raise ValueError("Invalid direction")
 
 
-def solve(maze: Maze) -> tuple[str, list[tuple[int, int]]]:
+def solve(maze: MazeGenerator) -> tuple[str, list[tuple[int, int]]]:
     """Find shortest path using BFS.
 
     Returns:

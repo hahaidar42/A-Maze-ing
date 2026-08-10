@@ -37,7 +37,7 @@ class Cell:
         self.visited: bool = False
 
 
-class Maze:
+class MazeGenerator:
     """
     Represents a maze grid with generation and visualization capabilities.
 
@@ -298,6 +298,8 @@ class Maze:
                     frontier.append(neighbor)
             checkpattern: bool = True
             while checkpattern:
+                if not frontier:
+                    break
                 ranfrontier = random.choice(frontier)
                 visited_neighbors = self.get_visited_neighbors(ranfrontier)
                 if not visited_neighbors:

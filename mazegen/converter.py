@@ -1,5 +1,5 @@
-from maze import Maze, Cell
-from solver import solve
+from mazegen.maze import MazeGenerator, Cell
+from mazegen.solver import solve
 
 
 def cell_to_hex(cell: Cell) -> str:
@@ -40,7 +40,7 @@ def cell_to_hex(cell: Cell) -> str:
     return format(value, 'x')
 
 
-def grid_to_lines(maze: Maze) -> list[str]:
+def grid_to_lines(maze: MazeGenerator) -> list[str]:
     """
     Convert the entire maze grid to a list of hexadecimal strings.
 
@@ -63,7 +63,7 @@ def grid_to_lines(maze: Maze) -> list[str]:
     return lines
 
 
-def write_maze_file(maze: Maze, filepath: str) -> None:
+def write_maze_file(maze: MazeGenerator, filepath: str) -> None:
     """
     Write the maze to a file in the required output format.
 

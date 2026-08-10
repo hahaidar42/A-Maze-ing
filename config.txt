@@ -5,4 +5,4 @@ EXIT=14,14
 OUTPUT_FILE=maze.txt
 PERFECT=True
 SEED=42
-ALGO= prim
+ALGO= DFS

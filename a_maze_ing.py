@@ -1,8 +1,8 @@
-from maze import Maze
+from mazegen.maze import MazeGenerator
 from parser import parse_config
 from typing import Any, cast
-from solver import solve
-from converter import write_maze_file
+from mazegen.solver import solve
+from mazegen.converter import write_maze_file
 import os
 
 
@@ -34,7 +34,7 @@ def main() -> Any:
     exit_: tuple[int, int] = cast(tuple[int, int], config["EXIT"])
     perfect: bool = cast(bool, config["PERFECT"])
     algo: str = cast(str, config["ALGO"])
-    maze = Maze(
+    maze = MazeGenerator(
         width,
         height,
         entry,
