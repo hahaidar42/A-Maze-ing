@@ -3,6 +3,7 @@ from parser import parse_config
 from typing import Any, cast
 from solver import solve
 from converter import write_maze_file
+import os
 
 
 def main() -> Any:
@@ -19,6 +20,7 @@ def main() -> Any:
         entry,
         exit_,
     )
+    os.system("cls" if os.name == "nt" else "clear")
     if config["SEED"] is not None:
         seed = cast(int | None, config["SEED"])
     else:
@@ -53,21 +55,26 @@ def main() -> Any:
             continue
 
         if choice == 1:
+            os.system("cls" if os.name == "nt" else "clear")
             if seed:
                 seed += 1
             maze.build(seed, True, perfect)
             maze.print_ascii(colors[colorindex], patternb)
             solved = False
+
         elif choice == 2:
             directions, path = solve(maze)
             if solved:
                 solved = False
+                os.system("cls" if os.name == "nt" else "clear")
                 maze.print_ascii(colors[colorindex], patternb)
             else:
                 solved = True
-                maze.printsolved(colors[colorindex], patternb, path)
+                os.system("cls" if os.name == "nt" else "clear")
+                maze.animate_path(path, colors[colorindex],)
 
         elif choice == 3:
+            os.system("cls" if os.name == "nt" else "clear")
             if colorindex > 5:
                 colorindex = 0
             colorindex += 1

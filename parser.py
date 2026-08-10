@@ -96,7 +96,7 @@ def parse_config(filepath: str) -> Dict[str,
     except FileNotFoundError:
         raise FileNotFoundError(f"configuration file '{filepath}' not found")
 
-    required = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"}
+    required = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT", "ALGO"}
     missing = required - config.keys()
     if missing:
         raise ValueError(f"Missing required keys: {missing}")
