@@ -55,6 +55,7 @@ def main() -> Any:
         if choice == 1:
             if seed:
                 seed += 1
+            print("\033[H\033[J", end="")
             maze.build(seed, True, perfect)
             maze.print_ascii(colors[colorindex], patternb)
             solved = False
@@ -62,12 +63,14 @@ def main() -> Any:
             directions, path = solve(maze)
             if solved:
                 solved = False
+                print("\033[H\033[J", end="")
                 maze.print_ascii(colors[colorindex], patternb)
             else:
                 solved = True
-                maze.printsolved(colors[colorindex], patternb, path)
+                maze.animate_path(path, colors[colorindex],)
 
         elif choice == 3:
+            print("\033[H\033[J", end="")
             if colorindex > 5:
                 colorindex = 0
             colorindex += 1

@@ -1,4 +1,5 @@
 import random
+import time
 
 
 class Cell:
@@ -98,6 +99,32 @@ class Maze:
             if neighbor and not neighbor.visited:
                 unvisited_neighbors.append(direction)
         return unvisited_neighbors
+
+    # def animate_path(self, path: list[tuple[int, int]],
+    #                  color: str = RESET) -> None:
+    #     shown_path: list[tuple[int, int]] = []
+
+    #     for cell in path:
+    #         shown_path.append(cell)
+
+    #         # clear terminal
+    #         print("\033[H\033[J", end="")
+
+    #         # print current progress
+    #         self.printsolved(path=shown_path, color=color)
+
+    #         # delay
+    #        time.sleep(0.05)
+    def animate_path(self, path,color: str = RESET) -> None:
+        self.printsolved(path=[path[0]],color=color)
+
+        for i in range(1, len(path)):
+            time.sleep(0.05)
+
+            # move cursor up / redraw
+            print("\033[H", end="")
+
+            self.printsolved(path=path[:i+1], color=color)
 
     def generate(self, seed: int | None = None) -> None:
         if seed is not None:
