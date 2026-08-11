@@ -275,50 +275,57 @@ class MazeGenerator:
         """
         if seed is not None:
             random.seed(seed)
+        pattern_coords = set(self.pattern42_coords())
         frontier: list[Cell] = []
         while True:
             x = random.randint(0, self.width - 1)
             y = random.randint(0, self.height - 1)
             current = self.get_cell(x, y)
-            if not current.visited:
+            if not current.visited and (x, y) not in pattern_coords:
                 break
         current.visited = True
         directions: list[str] = self.get_unvisited_neighbors(current)
         for i in directions:
             neighbor = self.get_neighbor(current, i)
-            if neighbor:
+            if (neighbor
+                    and not neighbor.visited
+                    and (neighbor.x, neighbor.y) not in pattern_coords
+                    ):
                 frontier.append(neighbor)
         while frontier:
-            checkpattern: bool = True
-            while checkpattern:
-                if not frontier:
-                    break
-                ranfrontier = random.choice(frontier)
-                visited_neighbors = self.get_visited_neighbors(ranfrontier)
-                if not visited_neighbors:
-                    frontier.remove(ranfrontier)
-                    continue
-                direction = random.choice(visited_neighbors)
+            ranfrontier = random.choice(frontier)
+            visited_neighbors = self.get_visited_neighbors(ranfrontier)
+            if not visited_neighbors:
+                frontier.remove(ranfrontier)
+                continue
+            valid_neighbors = []
+            for direction in visited_neighbors:
                 newvisted = self.get_neighbor(ranfrontier, direction)
-                if newvisted is None:
-                    frontier.remove(ranfrontier)
-                    continue
-                if (newvisted.x, newvisted.y) in self.pattern42_coords():
-                    frontier.remove(ranfrontier)
-                    continue
-                if (newvisted.x, newvisted.y) not in self.pattern42_coords():
-                    self.remove_wall(ranfrontier, direction)
-                    ranfrontier.visited = True
-                    frontier.remove(ranfrontier)
-                    current = ranfrontier
-                for i in directions:
-                    neighbor = self.get_neighbor(current, i)
-                    if (neighbor and not neighbor.visited
-                            and neighbor not in frontier
-                            and (neighbor.x, neighbor.y)
-                            not in self.pattern42_coords()):
-                        frontier.append(neighbor) 
-                    checkpattern: bool = False
+
+                if (
+                    newvisted
+                    and (newvisted.x, newvisted.y) not in pattern_coords
+                ):
+                    valid_neighbors.append(direction)
+            if not valid_neighbors:
+                frontier.remove(ranfrontier)
+                continue
+            direction = random.choice(valid_neighbors)
+
+            self.remove_wall(ranfrontier, direction)
+
+            ranfrontier.visited = True
+            frontier.remove(ranfrontier)
+
+            current = ranfrontier
+            directions: list[str] = self.get_unvisited_neighbors(current)
+            for i in directions:
+                neighbor = self.get_neighbor(current, i)
+                if (neighbor and not neighbor.visited
+                        and neighbor not in frontier
+                        and (neighbor.x, neighbor.y) not in pattern_coords):
+                    frontier.append(neighbor)
+
 
     def generate(self, seed: int | None = None) -> None:
         """
