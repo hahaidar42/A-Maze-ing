@@ -289,13 +289,6 @@ class MazeGenerator:
             if neighbor:
                 frontier.append(neighbor)
         while frontier:
-            for i in directions:
-                neighbor = self.get_neighbor(current, i)
-                if (neighbor and not neighbor.visited
-                        and neighbor not in frontier
-                        and (neighbor.x, neighbor.y)
-                        not in self.pattern42_coords()):
-                    frontier.append(neighbor)
             checkpattern: bool = True
             while checkpattern:
                 if not frontier:
@@ -318,6 +311,14 @@ class MazeGenerator:
                     ranfrontier.visited = True
                     frontier.remove(ranfrontier)
                     current = ranfrontier
+                for i in directions:
+                    neighbor = self.get_neighbor(current, i)
+                    if (neighbor and not neighbor.visited
+                            and neighbor not in frontier
+                            and (neighbor.x, neighbor.y)
+                            not in self.pattern42_coords()):
+                        frontier.append(neighbor) 
+                    checkpattern: bool = False
 
     def generate(self, seed: int | None = None) -> None:
         """
@@ -638,7 +639,7 @@ class MazeGenerator:
                             raise ValueError(
                                 "Exit is in the 42 pattern")
 
-        if algo == "DFS":
+        if algo == "dfs":
             self.generate(seed)
         else:
             self.primgeneration(seed)

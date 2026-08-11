@@ -55,7 +55,7 @@ def main() -> Any:
     PINK = "\033[38;5;217m"
 
     colors = (RESET, RED, GREEN, BLUE, YELLOW, WHITE, PINK)
-    maze.build(seed, True, perfect, algo)  # need to add algo
+    maze.build(seed, True, perfect, algo)
     colorindex: int = 0
     write_maze_file(maze, output_file)
     maze.print_ascii(colors[colorindex], True)
@@ -78,7 +78,7 @@ def main() -> Any:
             os.system("cls" if os.name == "nt" else "clear")
             if seed:
                 seed += 1
-            maze.build(seed, True, perfect, algo)  # need to add algo
+            maze.build(seed, True, perfect, algo)
             maze.print_ascii(colors[colorindex], patternb)
             solved = False
 

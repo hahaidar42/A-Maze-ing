@@ -5,8 +5,12 @@ CONFIG = config.txt
 
 .PHONY: install run debug clean lint lint-strict
 
+
+build:
+	$(PYTHON) -m build
+
 install:
-	echo "No external dependencies required."
+	$(PIP) install dist/mazegen-*.whl
 
 run:
 	$(PYTHON) $(MAIN) $(CONFIG)

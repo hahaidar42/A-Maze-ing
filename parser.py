@@ -108,8 +108,9 @@ def parse_config(filepath: str) -> Dict[str,
     perfect = parse_bool(config["PERFECT"])
     output_file = config["OUTPUT_FILE"].strip()
     seed = parse_int(config["SEED"]) if "SEED" in config else None
-    algo = config["ALGO"] if "ALGO" in config else "DFS"
-    if algo != "DFS" and algo != "PRIM":
+    algo = config["ALGO"].lower() if "ALGO" in config else "DFS"
+    print(algo)
+    if algo != "dfs" and algo != "prim":
         raise ValueError(
             "choose one of the valid algo options 'DFS' OR 'PRIM'")
 
